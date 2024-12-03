@@ -13,21 +13,9 @@ const unsplash = createApi({
 });
 
 export const getMemes = async (req, res) => {
-     const serverUrl = `${req.protocol}://${req.get('host')}`;
      const memes = await Meme.find().sort({ createdAt: -1 });
 
-     const memesWithFullUrl = memes.map(meme => {
-          let fullUrl = meme.url;
-          if (!isValidUrl(meme.url) && meme.url.startsWith('/uploads')) {
-               fullUrl = `${serverUrl}${meme.url}`;
-          }
-          return {
-               ...meme.toObject(),
-               url: fullUrl
-          };
-     });
-
-     res.json(memesWithFullUrl);
+     return res.json(memes);
 };
 
 // Function to generate a random 5-digit number
@@ -53,10 +41,8 @@ export const addMeme = async (req, res) => {
           }
      }
 
-     // Convert base64 image to server URL
-     const imageUrl = saveBase64Image(image, './uploads');
 
-     const meme = new Meme({ url: imageUrl, base64: image, hashTag, sizeInMB });
+     const meme = new Meme({ url: image, hashTag, sizeInMB });
      await meme.save();
      res.json({ message: 'Meme added successfully!', hashTag, sizeInMB });
 };
@@ -66,14 +52,9 @@ export const getMemeByHashTag = async (req, res) => {
      try {
           const meme = await Meme.findOne({ hashTag });
           if (meme) {
-               const serverUrl = `${req.protocol}://${req.get('host')}`;
-               const fullUrl = !isValidUrl(meme.url) && meme.url.startsWith('/uploads')
-                    ? `${serverUrl}${meme.url}`
-                    : meme.url;
-
                res.json({
                     ...meme.toObject(),
-                    url: fullUrl
+                    url: meme.url
                });
           } else {
                res.status(404).json({ message: 'Meme not found' });
@@ -123,6 +104,7 @@ export const unlikeMeme = async (req, res) => {
 export const getRandomImage = async (req, res) => {
      try {
           const result = await unsplash.photos.getRandom({ count: 5 });
+          console.log("*&*&*&*&*&**", result)
           if (result.errors) {
                res.status(500).json({ message: 'Error fetching images', errors: result.errors });
           } else {
