@@ -13,7 +13,7 @@ const unsplash = createApi({
 });
 
 export const getMemes = async (req, res) => {
-     const memes = await Meme.find();
+     const memes = await Meme.find().sort({ createdAt: -1 });
      res.json(memes);
 };
 
