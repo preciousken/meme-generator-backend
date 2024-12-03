@@ -77,6 +77,25 @@ export const likeMeme = async (req, res) => {
      }
 };
 
+
+export const unlikeMeme = async (req, res) => {
+     const { hashTag } = req.params;
+     try {
+          const meme = await Meme.findOneAndUpdate(
+               { hashTag, likes: { $gt: 0 } },
+               { $inc: { likes: -1 } },
+               { new: true }
+          );
+          if (meme) {
+               res.json({ message: 'Meme unliked successfully!', likes: meme.likes });
+          } else {
+               res.status(404).json({ message: 'Meme not found or already at zero likes' });
+          }
+     } catch (error) {
+          res.status(500).json({ message: 'Server error', error });
+     }
+};
+
 export const getRandomImage = async (req, res) => {
      try {
           const result = await unsplash.photos.getRandom({ count: 5 });
@@ -93,3 +112,4 @@ export const getRandomImage = async (req, res) => {
           res.status(500).json({ message: 'Server error', error });
      }
 };
+

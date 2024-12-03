@@ -8,6 +8,7 @@ router.get('/get-memes', memeController.getMemes);
 router.post('/add-meme', memeController.addMeme);
 router.get('/get-meme-by-hash-tag/:hashTag', memeController.getMemeByHashTag);
 router.get('/like-meme/:hashTag', memeController.likeMeme);
+router.get('/unlike-meme/:hashTag', memeController.unlikeMeme);
 router.get('/get-random-image', memeController.getRandomImage);
 
 export default router;
