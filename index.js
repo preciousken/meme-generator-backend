@@ -17,6 +17,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static('uploads'));
+
 // connect mongodb
 mongoose.connect(process.env.MONGODB_URI, {
      useNewUrlParser: true,

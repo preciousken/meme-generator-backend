@@ -1,6 +1,6 @@
 // controllers/memeController.js
 import Meme from '../models/meme.js';
-import { getBase64SizeInMB } from '../utils/helper.js';
+import { getBase64SizeInMB, saveBase64Image, isValidUrl } from '../utils/helper.js';
 import { createApi } from 'unsplash-js';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
@@ -13,8 +13,21 @@ const unsplash = createApi({
 });
 
 export const getMemes = async (req, res) => {
+     const serverUrl = `${req.protocol}://${req.get('host')}`;
      const memes = await Meme.find().sort({ createdAt: -1 });
-     res.json(memes);
+
+     const memesWithFullUrl = memes.map(meme => {
+          let fullUrl = meme.url;
+          if (!isValidUrl(meme.url) && meme.url.startsWith('/uploads')) {
+               fullUrl = `${serverUrl}${meme.url}`;
+          }
+          return {
+               ...meme.toObject(),
+               url: fullUrl
+          };
+     });
+
+     res.json(memesWithFullUrl);
 };
 
 // Function to generate a random 5-digit number
@@ -40,7 +53,10 @@ export const addMeme = async (req, res) => {
           }
      }
 
-     const meme = new Meme({ url: image, hashTag, sizeInMB });
+     // Convert base64 image to server URL
+     const imageUrl = saveBase64Image(image, './uploads');
+
+     const meme = new Meme({ url: imageUrl, base64: image, hashTag, sizeInMB });
      await meme.save();
      res.json({ message: 'Meme added successfully!', hashTag, sizeInMB });
 };
@@ -50,7 +66,15 @@ export const getMemeByHashTag = async (req, res) => {
      try {
           const meme = await Meme.findOne({ hashTag });
           if (meme) {
-               res.json(meme);
+               const serverUrl = `${req.protocol}://${req.get('host')}`;
+               const fullUrl = !isValidUrl(meme.url) && meme.url.startsWith('/uploads')
+                    ? `${serverUrl}${meme.url}`
+                    : meme.url;
+
+               res.json({
+                    ...meme.toObject(),
+                    url: fullUrl
+               });
           } else {
                res.status(404).json({ message: 'Meme not found' });
           }
