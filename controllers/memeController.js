@@ -27,7 +27,6 @@ function generateHashTag() {
 export const addMeme = async (req, res) => {
      const { image } = req.body;
      const sizeInMB = getBase64SizeInMB(image);
-     console.log(`Size of base64 image: ${sizeInMB} MB`);
 
      let hashTag;
      let isUnique = false;
@@ -104,7 +103,6 @@ export const unlikeMeme = async (req, res) => {
 export const getRandomImage = async (req, res) => {
      try {
           const result = await unsplash.photos.getRandom({ count: 5 });
-          console.log("*&*&*&*&*&**", result)
           if (result.errors) {
                res.status(500).json({ message: 'Error fetching images', errors: result.errors });
           } else {

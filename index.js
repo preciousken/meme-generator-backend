@@ -1,5 +1,4 @@
 import express from 'express';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import memeRoutes from './routes/memeRoutes.js';
@@ -9,13 +8,9 @@ dotenv.config();
 
 const app = express();
 
-app.use(express.json());
+app.use(express.json({ limit: 'Infinity' }));
 app.use(cors());
-app.use(express.urlencoded({ extended: true }));
-
-// Increase the body size limit
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+app.use(express.urlencoded({ limit: 'Infinity', extended: true }));
 
 // Serve static files from the 'uploads' directory
 app.use('/uploads', express.static('uploads'));
