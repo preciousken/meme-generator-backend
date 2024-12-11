@@ -3,6 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import memeRoutes from './routes/memeRoutes.js';
 import dotenv from 'dotenv';
+import morgan from 'morgan';
 
 dotenv.config();
 
@@ -10,6 +11,7 @@ const app = express();
 
 app.use(express.json({ limit: 'Infinity' }));
 app.use(cors());
+app.use(morgan('dev'));
 app.use(express.urlencoded({ limit: 'Infinity', extended: true }));
 
 // Serve static files from the 'uploads' directory
@@ -19,6 +21,10 @@ app.use('/uploads', express.static('uploads'));
 mongoose.connect(process.env.MONGODB_URI, {
      useNewUrlParser: true,
      useUnifiedTopology: true
+}).then(() => {
+     console.log("Connected to MongoDB");
+}).catch((err) => {
+     console.log("Error connecting to MongoDB", err);
 });
 
 app.use('/memes', memeRoutes);

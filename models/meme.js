@@ -2,7 +2,8 @@ import mongoose from 'mongoose';
 
 const memeSchema = new mongoose.Schema({
      url: String,
-     base64: String,
+     canvasState: { type: Object, default: null },
+     // base64: String,
      hashTag: { type: String, unique: true },
      sizeInMB: Number,
      likes: { type: Number, default: 0 },
