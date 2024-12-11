@@ -28,8 +28,6 @@ export const addMeme = async (req, res) => {
      const { image, canvasState } = req.body;
      const sizeInMB = getBase64SizeInMB(image);
 
-     console.log("ljlkj canvasState_________________________", typeof canvasState)
-
      let hashTag;
      let isUnique = false;
 
