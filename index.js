@@ -11,9 +11,12 @@ const app = express();
 
 app.use(express.json({ limit: 'Infinity' }));
 app.use(cors({
-     origin: '*',
-     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-     allowedHeaders: ['Content-Type', 'Authorization']
+    origin: process.env.NODE_ENV === 'production' 
+        ? ['https://rize2day.com', 'http://rize2day.com']
+        : ['http://localhost:5175', 'http://localhost:3000'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept']
 }));
 app.use(morgan('dev'));
 app.use(express.urlencoded({ limit: 'Infinity', extended: true }));
