@@ -25,7 +25,7 @@ function generateHashTag() {
 
 // add meme
 export const addMeme = async (req, res) => {
-     const { image, canvasState } = req.body;
+     const { image, canvasMetadata } = req.body;  // Updated to receive canvasMetadata
      const sizeInMB = getBase64SizeInMB(image);
 
      let hashTag;
@@ -40,8 +40,17 @@ export const addMeme = async (req, res) => {
           }
      }
 
+     // console.log(canvasMetadata);
 
-     const meme = new Meme({ url: image, canvasState, hashTag, sizeInMB });
+     // Create new meme with the complete metadata
+     const meme = new Meme({
+          url: image,
+          canvasState: canvasMetadata.canvasState,
+          dimensions: canvasMetadata.dimensions,
+          hashTag,
+          sizeInMB
+     });
+
      await meme.save();
      res.json({ message: 'Meme added successfully!', hashTag, sizeInMB });
 };
