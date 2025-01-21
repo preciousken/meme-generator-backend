@@ -19,7 +19,7 @@ app.use(express.urlencoded({ limit: 'Infinity', extended: true }));
 // Serve static files from the 'uploads' directory
 app.use('/uploads', express.static('uploads'));
 
-// connect mongodb
+// .connect mongodb
 mongoose.connect(process.env.MONGODB_URI, {
      useNewUrlParser: true,
      useUnifiedTopology: true
