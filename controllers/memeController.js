@@ -60,15 +60,33 @@ export const getMemeByHashTag = async (req, res) => {
      try {
           const meme = await Meme.findOne({ hashTag });
           if (meme) {
-               res.json({
+               // Convert to plain object and ensure all necessary data is included
+               const memeData = {
                     ...meme.toObject(),
-                    url: meme.url
-               });
+                    url: meme.url,
+                    canvasState: meme.canvasState,
+                    dimensions: meme.dimensions,
+                    hashTag: meme.hashTag,
+                    sizeInMB: meme.sizeInMB,
+                    likes: meme.likes,
+                    createdAt: meme.createdAt
+               };
+
+               // Remove any undefined values
+               Object.keys(memeData).forEach(key => 
+                    memeData[key] === undefined && delete memeData[key]
+               );
+
+               res.json(memeData);
           } else {
                res.status(404).json({ message: 'Meme not found' });
           }
      } catch (error) {
-          res.status(500).json({ message: 'Server error', error });
+          console.error('Error fetching meme:', error);
+          res.status(500).json({ 
+               message: 'Server error while fetching meme', 
+               error: error.message 
+          });
      }
 };
 
