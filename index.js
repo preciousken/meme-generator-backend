@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import memeRoutes from './routes/memeRoutes.js';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
+import { swaggerUi, specs } from './utils/swagger.js';
 
 dotenv.config();
 
@@ -28,6 +29,9 @@ mongoose.connect(process.env.MONGODB_URI, {
 }).catch((err) => {
      console.log("Error connecting to MongoDB", err);
 });
+
+// Add before routes
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use('/memes', memeRoutes);
 
